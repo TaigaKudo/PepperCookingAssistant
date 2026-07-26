@@ -14,9 +14,5 @@ services:
      source: db-compose-volume
      target: /var/lib/postgresql/data
 
-   - type: bind
-     source: ./docker/dbinit
-     target: /docker-entrypoint-initdb.d
-
 volumes:
  db-compose-volume:
