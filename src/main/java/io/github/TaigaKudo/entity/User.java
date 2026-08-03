@@ -25,23 +25,23 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable = false)
+	@Column(name = "name", nullable = false)
 	private String name;
 	
-	@Column(nullable = false, unique = true)
+	@Column(name = "email", nullable = false, unique = true)
 	private String email;
 	
-	@Column(nullable = false)
+	@Column(name = "password_hash", nullable = false)
 	private String passwordHash;
 	
-	@Column(nullable = false)
+	@Column(name = "created_at", nullable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 	
-	@Column(nullable = false)
+	@Column(name = "updated_at", nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	
-	@Column
+	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 }
