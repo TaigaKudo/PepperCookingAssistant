@@ -26,20 +26,20 @@ public class IngredientCategory {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	
-	@Column(nullable = false, unique = true)
+	@Column(name = "category_name", nullable = false, unique = true)
 	private String categoryName;
 	
-	@Column
+	@Column(name = "reading")
 	private String reading;
 	
-	@Column(nullable = false)
+	@Column(name = "created_at", nullable = false)
 	@CreationTimestamp
 	private LocalDateTime createdAt;
 
-	@Column(nullable = false)
+	@Column(name = "updated_at", nullable = false)
 	@UpdateTimestamp
 	private LocalDateTime updatedAt;
 	
-	@Column
+	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 }
