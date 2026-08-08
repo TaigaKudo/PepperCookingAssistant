@@ -11,6 +11,7 @@ import java.util.HexFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.TaigaKudo.auth.exception.AuthenticationException;
 import io.github.TaigaKudo.auth.repository.RefreshTokenRepository;
 import io.github.TaigaKudo.entity.RefreshToken;
 import io.github.TaigaKudo.entity.User;
@@ -74,13 +75,21 @@ public class RefreshTokenService {
 		RefreshToken refreshToken = refreshTokenRepository
 				.findByTokenHashAndRevokedAtIsNull(tokenHash)
 				.orElseThrow(() ->
-					new IllegalArgumentException("無効なRefresh Tokenです")
+					new AuthenticationException("無効なRefresh Tokenです")
 						);
 		
 		if(refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
-			throw new IllegalArgumentException("Refresh Tokenの有効期限が切れています");
+			throw new AuthenticationException("Refresh Tokenの有効期限が切れています");
 		}
 		
 		return refreshToken;
+	}
+	
+	/* リフレッシュトークンローテート処理 */
+	@Transactional
+	public String rotate(RefreshToken current, LocalDateTime newExpiresAt) {
+		current.revoke();
+		
+		return issue(current.getUser(), newExpiresAt);
 	}
 }
