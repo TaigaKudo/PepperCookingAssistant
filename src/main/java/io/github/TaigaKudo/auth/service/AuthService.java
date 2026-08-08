@@ -8,8 +8,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import io.github.TaigaKudo.auth.dto.LoginResult;
+import io.github.TaigaKudo.auth.dto.RefreshResult;
+import io.github.TaigaKudo.auth.exception.AuthenticationException;
 import io.github.TaigaKudo.dto.LoginRequest;
-import io.github.TaigaKudo.dto.TokenResponse;
 import io.github.TaigaKudo.entity.RefreshToken;
 import io.github.TaigaKudo.entity.User;
 import io.github.TaigaKudo.repository.UserRepository;
@@ -47,7 +48,7 @@ public class AuthService {
 		User user = userRepository
 				.findByEmailAndDeletedAtIsNull(request.email())
 				.orElseThrow(() ->
-				new IllegalArgumentException("メールアドレスまたはパスワードが正しくありません")
+				new AuthenticationException("メールアドレスまたはパスワードが正しくありません")
 				);
 		
 		// パスワード認証
@@ -56,7 +57,7 @@ public class AuthService {
 				user.getPasswordHash()
 				)
 			) {
-			throw new IllegalArgumentException("メールアドレスまたはパスワードが正しくありません");
+			throw new AuthenticationException("メールアドレスまたはパスワードが正しくありません");
 		}
 		
 		// アクセストークン発行
@@ -71,13 +72,17 @@ public class AuthService {
 	
 	/* アクセストークン再発行 */
 	@Transactional
-	public TokenResponse refresh(String rawRefreshToken) {
-		RefreshToken refreshToken = refreshTokenService.validate(rawRefreshToken);
+	public RefreshResult refresh(String rawRefreshToken) {
+		RefreshToken current = refreshTokenService.validate(rawRefreshToken);
 		
-		User user = refreshToken.getUser();
+		User user = current.getUser();
 		
 		String accessToken = jwtService.generateAccessToken(user.getId());
 		
-		return new TokenResponse(accessToken);
+		LocalDateTime newExpiresAt = LocalDateTime.now().plus(refreshTokenProperties.expiration());
+		
+		String newRefreshToken = refreshTokenService.rotate(current, newExpiresAt);
+		
+		return new RefreshResult(accessToken, newRefreshToken);
 	}
 }

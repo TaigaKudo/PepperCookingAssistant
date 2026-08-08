@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.TaigaKudo.auth.dto.LoginResult;
+import io.github.TaigaKudo.auth.dto.RefreshResult;
 import io.github.TaigaKudo.auth.service.AuthService;
 import io.github.TaigaKudo.dto.LoginRequest;
 import io.github.TaigaKudo.dto.TokenResponse;
@@ -55,8 +56,20 @@ public class AuthController {
 	public ResponseEntity<TokenResponse> refresh(
 			@CookieValue("refreshToken") String refreshToken
 			){
-		TokenResponse tokenResponse = authService.refresh(refreshToken);
+		RefreshResult result = authService.refresh(refreshToken);
 		
-		return ResponseEntity.ok(tokenResponse);
+		ResponseCookie refreshTokenCookie = ResponseCookie
+				.from("refreshToken", result.refreshToken())
+				.httpOnly(true)
+				.secure(refreshTokenProperties.cookieSecure())
+				.path("/auth")
+				.maxAge(refreshTokenProperties.expiration())
+				.sameSite("Lax")
+				.build();
+		
+		return ResponseEntity
+				.ok()
+				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
+				.body(new TokenResponse(result.accessToken()));
 	}
 }
