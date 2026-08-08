@@ -5,6 +5,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,5 +49,14 @@ public class AuthController {
 				.ok()
 				.header(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString())
 				.body(new TokenResponse(result.accessToken()));
+	}
+	
+	@PostMapping("/refresh")
+	public ResponseEntity<TokenResponse> refresh(
+			@CookieValue("refreshToken") String refreshToken
+			){
+		TokenResponse tokenResponse = authService.refresh(refreshToken);
+		
+		return ResponseEntity.ok(tokenResponse);
 	}
 }
