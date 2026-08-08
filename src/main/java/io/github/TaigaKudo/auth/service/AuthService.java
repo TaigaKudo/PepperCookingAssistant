@@ -9,6 +9,8 @@ import org.springframework.stereotype.Service;
 
 import io.github.TaigaKudo.auth.dto.LoginResult;
 import io.github.TaigaKudo.dto.LoginRequest;
+import io.github.TaigaKudo.dto.TokenResponse;
+import io.github.TaigaKudo.entity.RefreshToken;
 import io.github.TaigaKudo.entity.User;
 import io.github.TaigaKudo.repository.UserRepository;
 import io.github.TaigaKudo.security.JwtService;
@@ -38,6 +40,7 @@ public class AuthService {
 		this.refreshTokenProperties = refreshTokenProperties;
 	}
 	
+	/* ログイン認証 */
 	@Transactional
 	public LoginResult login(LoginRequest request) {
 		// メールアドレス認証
@@ -64,5 +67,17 @@ public class AuthService {
 		String refreshToken = refreshTokenService.issue(user, refreshTokenExpiresAt);
 		
 		return new LoginResult(accessToken, refreshToken);
+	}
+	
+	/* アクセストークン再発行 */
+	@Transactional
+	public TokenResponse refresh(String rawRefreshToken) {
+		RefreshToken refreshToken = refreshTokenService.validate(rawRefreshToken);
+		
+		User user = refreshToken.getUser();
+		
+		String accessToken = jwtService.generateAccessToken(user.getId());
+		
+		return new TokenResponse(accessToken);
 	}
 }
