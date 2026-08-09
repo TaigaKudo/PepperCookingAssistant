@@ -44,4 +44,9 @@ public class User {
 	
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+	
+	public void changeName(String name) {
+		this.name = name;
+	}
+	
 }

@@ -1,12 +1,17 @@
 package io.github.TaigaKudo.controller;
 
+import jakarta.validation.Valid;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.TaigaKudo.dto.UserMeResponse;
+import io.github.TaigaKudo.dto.UserUpdateRequest;
 import io.github.TaigaKudo.service.UserService;
 
 @RestController
@@ -24,6 +29,18 @@ public class UserController {
 		Long userId = (Long)authentication.getPrincipal();
 		
 		UserMeResponse response = userService.getMe(userId);
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	@PutMapping("/me")
+	public ResponseEntity<UserMeResponse> updateMe(
+			Authentication authentication,
+			@Valid @RequestBody UserUpdateRequest request
+			){
+		Long userId = (Long)authentication.getPrincipal();
+		
+		UserMeResponse response = userService.updateMe(userId, request);
 		
 		return ResponseEntity.ok(response);
 	}
