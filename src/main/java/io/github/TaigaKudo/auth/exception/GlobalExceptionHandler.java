@@ -5,13 +5,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import io.github.TaigaKudo.dto.ErrorResponse;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
 	@ExceptionHandler(AuthenticationException.class)
-	public ResponseEntity<String> handleAuthenticationException(AuthenticationException exception){
+	public ResponseEntity<ErrorResponse> handleAuthenticationException(AuthenticationException exception){
 		return ResponseEntity
 				.status(HttpStatus.UNAUTHORIZED)
-				.body(exception.getMessage());
+				.body(new ErrorResponse(exception.getMessage()));
 	}
 }
