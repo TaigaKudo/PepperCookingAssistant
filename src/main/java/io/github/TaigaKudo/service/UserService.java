@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.github.TaigaKudo.dto.UserMeResponse;
+import io.github.TaigaKudo.dto.UserUpdateRequest;
 import io.github.TaigaKudo.entity.User;
 import io.github.TaigaKudo.repository.UserRepository;
 
@@ -21,6 +22,25 @@ public class UserService {
 	public UserMeResponse getMe(Long userId) {
 		User user = userRepository.findById(userId)
 				.orElseThrow(() -> new IllegalArgumentException("ユーザーが見つかりません"));
+		
+		return new UserMeResponse(
+				user.getId(),
+				user.getName(),
+				user.getEmail()
+				);
+	}
+	
+	@Transactional
+	public UserMeResponse updateMe(
+			Long userId,
+			UserUpdateRequest request
+			) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() ->
+					new IllegalArgumentException("ユーザーが見つかりません")
+				);
+		
+		user.changeName(request.name());
 		
 		return new UserMeResponse(
 				user.getId(),
