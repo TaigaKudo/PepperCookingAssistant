@@ -3,6 +3,7 @@ package io.github.TaigaKudo.security;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -28,12 +29,15 @@ public class SecurityConfig {
 			.csrf(csrf -> csrf.disable())
 			.authorizeHttpRequests(
 				auth -> auth
-				.requestMatchers("/auth/login", "/auth/refresh").permitAll()
+				.requestMatchers("/auth/login", "/auth/logout", "/auth/refresh").permitAll()
 				.anyRequest().authenticated()
 					)
 			.addFilterBefore(
 					jwtAuthenticationFilter,
 					UsernamePasswordAuthenticationFilter.class
+					)
+			.sessionManagement(session -> session
+					.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 					);
 		
 		return http.build();

@@ -92,4 +92,12 @@ public class RefreshTokenService {
 		
 		return issue(current.getUser(), newExpiresAt);
 	}
+	
+	/* リフレッシュトークン失効処理 */
+	@Transactional
+	public void revoke(String rawToken) {
+		RefreshToken refreshToken = validate(rawToken);
+		
+		refreshToken.revoke();
+	}
 }
