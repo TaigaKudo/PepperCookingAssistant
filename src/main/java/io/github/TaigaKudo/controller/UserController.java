@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.github.TaigaKudo.dto.PasswordChangeRequest;
 import io.github.TaigaKudo.dto.UserMeResponse;
 import io.github.TaigaKudo.dto.UserUpdateRequest;
 import io.github.TaigaKudo.service.UserService;
@@ -43,5 +44,17 @@ public class UserController {
 		UserMeResponse response = userService.updateMe(userId, request);
 		
 		return ResponseEntity.ok(response);
+	}
+	
+	@PutMapping("/me/password")
+	public ResponseEntity<Void> changepassword(
+			Authentication authentication,
+			@Valid @RequestBody PasswordChangeRequest request
+			){
+		Long userId = (Long)authentication.getPrincipal();
+		
+		userService.changePassword(userId, request);
+		
+		return ResponseEntity.noContent().build();
 	}
 }
