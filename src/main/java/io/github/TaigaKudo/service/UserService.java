@@ -1,8 +1,11 @@
 package io.github.TaigaKudo.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.TaigaKudo.auth.exception.AuthenticationException;
+import io.github.TaigaKudo.dto.PasswordChangeRequest;
 import io.github.TaigaKudo.dto.UserMeResponse;
 import io.github.TaigaKudo.dto.UserUpdateRequest;
 import io.github.TaigaKudo.entity.User;
@@ -12,9 +15,14 @@ import io.github.TaigaKudo.repository.UserRepository;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 	
-	public UserService(UserRepository userRepository) {
+	public UserService(
+			UserRepository userRepository,
+			PasswordEncoder passwordEncoder
+			) {
 		this.userRepository = userRepository;
+		this.passwordEncoder = passwordEncoder;
 	}
 	
 	/* ユーザー情報取得 */
@@ -30,6 +38,7 @@ public class UserService {
 				);
 	}
 	
+	/* ユーザー名更新処理 */
 	@Transactional
 	public UserMeResponse updateMe(
 			Long userId,
@@ -47,5 +56,28 @@ public class UserService {
 				user.getName(),
 				user.getEmail()
 				);
+	}
+	
+	/* パスワード変更処理 */
+	@Transactional
+	public void changePassword(
+			Long userId,
+			PasswordChangeRequest request
+			) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() ->
+					new IllegalArgumentException("ユーザーが見つかりません")
+						);
+		
+		if(!passwordEncoder.matches(
+				request.currentPassword(),
+				user.getPasswordHash()
+				)) {
+			throw new AuthenticationException("現在のパスワードが正しくありません");
+		}
+		
+		String newPasswordHash = passwordEncoder.encode(request.newPassword());
+		
+		user.changePassword(newPasswordHash);
 	}
 }
