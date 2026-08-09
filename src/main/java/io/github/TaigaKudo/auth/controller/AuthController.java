@@ -5,7 +5,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +36,13 @@ public class AuthController {
 			) {
 		this.authService = authService;
 		this.refreshTokenProperties = refreshTokenProperties;
+	}
+	
+	@GetMapping("/csrf")
+	public ResponseEntity<Void> csrf(CsrfToken csrfToken){
+		// 実際にtokenにアクセスすることでCookieを作成させる
+		csrfToken.getToken();
+		return ResponseEntity.noContent().build();
 	}
 	
 	@PostMapping("/login")
