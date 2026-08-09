@@ -11,6 +11,7 @@ import java.util.HexFormat;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.TaigaKudo.auth.exception.AuthenticationException;
 import io.github.TaigaKudo.auth.repository.RefreshTokenRepository;
 import io.github.TaigaKudo.entity.RefreshToken;
 import io.github.TaigaKudo.entity.User;
@@ -28,6 +29,10 @@ public class RefreshTokenService {
 		this.secureRandom = new SecureRandom();
 	}
 	
+	/* 
+	 * アクセストークン生成
+	 * リフレッシュトークン生成
+	 * リフレッシュトークンDB格納 */
 	@Transactional
 	public String issue(User user, LocalDateTime expiresAt) {
 		String rawToken = generateToken();
@@ -40,6 +45,7 @@ public class RefreshTokenService {
 		return rawToken;
 	}
 	
+	/* アクセストークン生成 */
 	private String generateToken() {
 		byte[] tokenBytes = new byte[TOKEN_BYTE_LENGTH];
 		secureRandom.nextBytes(tokenBytes);
@@ -49,6 +55,7 @@ public class RefreshTokenService {
 				.encodeToString(tokenBytes);
 	}
 	
+	/* パスワードハッシュ化（平文⇒ハッシュ） */
 	private String hashToken(String rawToken) {
 		try {
 			MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -58,5 +65,31 @@ public class RefreshTokenService {
 		}catch(NoSuchAlgorithmException exception) {
 			throw new IllegalStateException("SHA-256 is not available", exception);
 		}
+	}
+	
+	/* アクセストークンの有効期限確認 */
+	@Transactional(readOnly = true)
+	public RefreshToken validate(String rawToken) {
+		String tokenHash = hashToken(rawToken);
+		
+		RefreshToken refreshToken = refreshTokenRepository
+				.findByTokenHashAndRevokedAtIsNull(tokenHash)
+				.orElseThrow(() ->
+					new AuthenticationException("無効なRefresh Tokenです")
+						);
+		
+		if(refreshToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+			throw new AuthenticationException("Refresh Tokenの有効期限が切れています");
+		}
+		
+		return refreshToken;
+	}
+	
+	/* リフレッシュトークンローテート処理 */
+	@Transactional
+	public String rotate(RefreshToken current, LocalDateTime newExpiresAt) {
+		current.revoke();
+		
+		return issue(current.getUser(), newExpiresAt);
 	}
 }
