@@ -85,4 +85,10 @@ public class AuthService {
 		
 		return new RefreshResult(accessToken, newRefreshToken);
 	}
+	
+	/* ログアウト処理呼び出し */
+	@Transactional
+	public void logout(String rawRefreshToken) {
+		refreshTokenService.revoke(rawRefreshToken);
+	}
 }

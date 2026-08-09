@@ -56,6 +56,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter{
 			SecurityContextHolder.getContext().setAuthentication(authentication);
 		}catch(Exception e) {
 			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+			response.setContentType("application/json");
+			response.setCharacterEncoding("UTF-8");
+			response.getWriter().write("{\"message\":\"Access Tokenが無効です\"}");
 			return;
 		}
 		
