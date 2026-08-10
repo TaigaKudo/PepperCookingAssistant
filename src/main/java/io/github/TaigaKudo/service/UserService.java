@@ -4,7 +4,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.TaigaKudo.auth.exception.AuthenticationException;
+import io.github.TaigaKudo.auth.exception.CurrentPasswordMismatchException;
+import io.github.TaigaKudo.auth.exception.EmailAlreadyUsedException;
+import io.github.TaigaKudo.auth.exception.UserNotFoundException;
 import io.github.TaigaKudo.dto.EmailChangeRequest;
 import io.github.TaigaKudo.dto.PasswordChangeRequest;
 import io.github.TaigaKudo.dto.UserMeResponse;
@@ -32,8 +34,8 @@ public class UserService {
 	/* ユーザー情報取得 */
 	@Transactional(readOnly = true)
 	public UserMeResponse getMe(Long userId) {
-		User user = userRepository.findById(userId)
-				.orElseThrow(() -> new IllegalArgumentException("ユーザーが見つかりません"));
+		User user = userRepository.findByIdAndDeletedAtIsNull(userId)
+				.orElseThrow(() -> new UserNotFoundException("ユーザーが見つかりません"));
 		
 		return new UserMeResponse(
 				user.getId(),
@@ -48,9 +50,9 @@ public class UserService {
 			Long userId,
 			UserUpdateRequest request
 			) {
-		User user = userRepository.findById(userId)
+		User user = userRepository.findByIdAndDeletedAtIsNull(userId)
 				.orElseThrow(() ->
-					new IllegalArgumentException("ユーザーが見つかりません")
+					new UserNotFoundException("ユーザーが見つかりません")
 				);
 		
 		user.changeName(request.name());
@@ -68,16 +70,16 @@ public class UserService {
 			Long userId,
 			PasswordChangeRequest request
 			) {
-		User user = userRepository.findById(userId)
+		User user = userRepository.findByIdAndDeletedAtIsNull(userId)
 				.orElseThrow(() ->
-					new IllegalArgumentException("ユーザーが見つかりません")
+					new UserNotFoundException("ユーザーが見つかりません")
 						);
 		
 		if(!passwordEncoder.matches(
 				request.currentPassword(),
 				user.getPasswordHash()
 				)) {
-			throw new AuthenticationException("現在のパスワードが正しくありません");
+			throw new CurrentPasswordMismatchException("現在のパスワードが正しくありません");
 		}
 		
 		String newPasswordHash = passwordEncoder.encode(request.newPassword());
@@ -91,17 +93,17 @@ public class UserService {
 			Long userId,
 			EmailChangeRequest request
 			) {
-		User user = userRepository.findById(userId)
+		User user = userRepository.findByIdAndDeletedAtIsNull(userId)
 				.orElseThrow(()->
-				new IllegalArgumentException("ユーザーが見つかりません")
+				new UserNotFoundException("ユーザーが見つかりません")
 						);
 		
 		if(!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())){
-			throw new IllegalArgumentException("現在のパスワードが正しくありません");
+			throw new CurrentPasswordMismatchException("現在のパスワードが正しくありません");
 		}
 		
 		if(userRepository.existsByEmailAndIdNotAndDeletedAtIsNull(request.newEmail(), userId)) {
-			throw new IllegalArgumentException("このメールアドレスは既に使用されています");
+			throw new EmailAlreadyUsedException("このメールアドレスは既に使用されています");
 		}
 		
 		user.changeEmail(request.newEmail());
@@ -110,9 +112,9 @@ public class UserService {
 	/* ユーザーアカウント論理削除処理 */
 	@Transactional
 	public void deleteMe(Long userId) {
-		User user = userRepository.findById(userId)
+		User user = userRepository.findByIdAndDeletedAtIsNull(userId)
 				.orElseThrow(() ->
-					new IllegalArgumentException("ユーザーが見つかりません")
+					new UserNotFoundException("ユーザーが見つかりません")
 				);
 		
 		user.delete();
