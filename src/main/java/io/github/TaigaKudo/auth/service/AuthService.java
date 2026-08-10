@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 import io.github.TaigaKudo.auth.dto.LoginResult;
 import io.github.TaigaKudo.auth.dto.RefreshResult;
 import io.github.TaigaKudo.auth.exception.AuthenticationException;
+import io.github.TaigaKudo.auth.exception.GlobalExceptionHandler;
 import io.github.TaigaKudo.dto.LoginRequest;
+import io.github.TaigaKudo.dto.RegisterRequest;
 import io.github.TaigaKudo.entity.RefreshToken;
 import io.github.TaigaKudo.entity.User;
 import io.github.TaigaKudo.repository.UserRepository;
@@ -20,6 +22,8 @@ import io.github.TaigaKudo.service.RefreshTokenService;
 
 @Service
 public class AuthService {
+
+    private final GlobalExceptionHandler globalExceptionHandler;
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
@@ -32,13 +36,14 @@ public class AuthService {
 			PasswordEncoder passwordEncoder,
 			JwtService jwtService,
 			RefreshTokenService refreshTokenService,
-			RefreshTokenProperties refreshTokenProperties
-			) {
+			RefreshTokenProperties refreshTokenProperties,
+			GlobalExceptionHandler globalExceptionHandler) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
 		this.refreshTokenService = refreshTokenService;
 		this.refreshTokenProperties = refreshTokenProperties;
+		this.globalExceptionHandler = globalExceptionHandler;
 	}
 	
 	/* ログイン認証 */
@@ -90,5 +95,23 @@ public class AuthService {
 	@Transactional
 	public void logout(String rawRefreshToken) {
 		refreshTokenService.revoke(rawRefreshToken);
+	}
+	
+	/* 新規アカウント登録処理 */
+	@Transactional
+	public void register(RegisterRequest request) {
+		if(userRepository.existsByEmailAndDeletedAtIsNull(request.email())) {
+			throw new IllegalArgumentException("このメールアドレスは既に使用されています");
+		}
+		
+		String passwordHash = passwordEncoder.encode(request.password());
+		
+		User user = new User(
+				request.name(),
+				request.email(),
+				passwordHash
+				);
+		
+		userRepository.save(user);
 	}
 }

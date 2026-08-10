@@ -17,13 +17,16 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
+	private final RefreshTokenService refreshTokenService;
 	
 	public UserService(
 			UserRepository userRepository,
-			PasswordEncoder passwordEncoder
+			PasswordEncoder passwordEncoder,
+			RefreshTokenService refreshTokenService
 			) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
+		this.refreshTokenService = refreshTokenService;
 	}
 	
 	/* ユーザー情報取得 */
@@ -102,5 +105,19 @@ public class UserService {
 		}
 		
 		user.changeEmail(request.newEmail());
+	}
+	
+	/* ユーザーアカウント論理削除処理 */
+	@Transactional
+	public void deleteMe(Long userId) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(() ->
+					new IllegalArgumentException("ユーザーが見つかりません")
+				);
+		
+		user.delete();
+		
+		// リフレッシュトークンも無効化する
+		refreshTokenService.revokeAllByUserId(userId);
 	}
 }

@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.HexFormat;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,5 +100,12 @@ public class RefreshTokenService {
 		RefreshToken refreshToken = validate(rawToken);
 		
 		refreshToken.revoke();
+	}
+	
+	/* リフレッシュトークン無効化処理 */
+	public void revokeAllByUserId(Long userId) {
+		List<RefreshToken> refreshToken = refreshTokenRepository.findAllByUserIdAndRevokedAtIsNull(userId);
+		
+		refreshToken.forEach(RefreshToken::revoke);
 	}
 }

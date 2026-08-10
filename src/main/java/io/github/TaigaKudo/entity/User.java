@@ -21,6 +21,14 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
+	
+	/* アプリ側で使用するコンストラクタ */
+	public User(String name, String email, String passwordHash) {
+		this.name = name;
+		this.email = email;
+		this.passwordHash = passwordHash;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -55,5 +63,9 @@ public class User {
 	
 	public void changeEmail(String email) {
 		this.email = email;
+	}
+	
+	public void delete() {
+		this.deletedAt = LocalDateTime.now();
 	}
 }
