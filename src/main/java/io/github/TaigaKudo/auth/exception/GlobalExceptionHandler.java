@@ -16,4 +16,25 @@ public class GlobalExceptionHandler {
 				.status(HttpStatus.UNAUTHORIZED)
 				.body(new ErrorResponse(exception.getMessage()));
 	}
+	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException exception){
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(new ErrorResponse(exception.getMessage()));
+	}
+	
+	@ExceptionHandler(EmailAlreadyUsedException.class)
+	public ResponseEntity<ErrorResponse> handlerEmailAlreadyUsedException(EmailAlreadyUsedException exception){
+		return ResponseEntity
+				.status(HttpStatus.CONFLICT)
+				.body(new ErrorResponse(exception.getMessage()));
+	}
+	
+	@ExceptionHandler(CurrentPasswordMismatchException.class)
+	public ResponseEntity<ErrorResponse> handleCurrentPasswordMismatchException(CurrentPasswordMismatchException exception){
+		return ResponseEntity
+				.status(HttpStatus.BAD_REQUEST)
+				.body(new ErrorResponse(exception.getMessage()));
+	}
 }
