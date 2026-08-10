@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -67,6 +68,17 @@ public class UserController {
 		Long userId = (Long)authentication.getPrincipal();
 		
 		userService.changeEmail(userId, request);
+		
+		return ResponseEntity.noContent().build();
+	}
+	
+	@DeleteMapping("/me")
+	public ResponseEntity<Void> deleteMe(
+			Authentication authentication
+			){
+		Long userId = (Long)authentication.getPrincipal();
+		
+		userService.deleteMe(userId);
 		
 		return ResponseEntity.noContent().build();
 	}

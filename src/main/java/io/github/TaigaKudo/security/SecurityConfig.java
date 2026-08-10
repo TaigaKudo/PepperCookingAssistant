@@ -38,7 +38,8 @@ public class SecurityConfig {
 						"/auth/login",
 						"/auth/logout",
 						"/auth/refresh",
-						"/auth/csrf"
+						"/auth/csrf",
+						"/auth/register"
 						).permitAll()
 				.anyRequest().authenticated()
 					)
