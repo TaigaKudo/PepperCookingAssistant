@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.github.TaigaKudo.auth.exception.AuthenticationException;
+import io.github.TaigaKudo.dto.EmailChangeRequest;
 import io.github.TaigaKudo.dto.PasswordChangeRequest;
 import io.github.TaigaKudo.dto.UserMeResponse;
 import io.github.TaigaKudo.dto.UserUpdateRequest;
@@ -79,5 +80,27 @@ public class UserService {
 		String newPasswordHash = passwordEncoder.encode(request.newPassword());
 		
 		user.changePassword(newPasswordHash);
+	}
+	
+	/* Email変更処理 */
+	@Transactional
+	public void changeEmail(
+			Long userId,
+			EmailChangeRequest request
+			) {
+		User user = userRepository.findById(userId)
+				.orElseThrow(()->
+				new IllegalArgumentException("ユーザーが見つかりません")
+						);
+		
+		if(!passwordEncoder.matches(request.currentPassword(), user.getPasswordHash())){
+			throw new IllegalArgumentException("現在のパスワードが正しくありません");
+		}
+		
+		if(userRepository.existsByEmailAndIdNotAndDeletedAtIsNull(request.newEmail(), userId)) {
+			throw new IllegalArgumentException("このメールアドレスは既に使用されています");
+		}
+		
+		user.changeEmail(request.newEmail());
 	}
 }

@@ -53,4 +53,7 @@ public class User {
 		this.passwordHash = passwordHash;
 	}
 	
+	public void changeEmail(String email) {
+		this.email = email;
+	}
 }
