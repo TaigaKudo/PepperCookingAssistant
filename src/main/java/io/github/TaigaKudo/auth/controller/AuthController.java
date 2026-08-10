@@ -18,9 +18,9 @@ import io.github.TaigaKudo.auth.dto.RefreshResult;
 import io.github.TaigaKudo.auth.exception.AuthenticationException;
 import io.github.TaigaKudo.auth.service.AuthService;
 import io.github.TaigaKudo.dto.LoginRequest;
+import io.github.TaigaKudo.dto.RegisterRequest;
 import io.github.TaigaKudo.dto.TokenResponse;
 import io.github.TaigaKudo.security.RefreshTokenProperties;
-import io.github.TaigaKudo.service.RefreshTokenService;
 
 @RestController
 @RequestMapping("/auth")
@@ -31,8 +31,7 @@ public class AuthController {
 	
 	public AuthController(
 			AuthService authService,
-			RefreshTokenProperties refreshTokenProperties,
-			RefreshTokenService refreshTokenService
+			RefreshTokenProperties refreshTokenProperties
 			) {
 		this.authService = authService;
 		this.refreshTokenProperties = refreshTokenProperties;
@@ -110,5 +109,14 @@ public class AuthController {
 				.noContent()
 				.header(HttpHeaders.SET_COOKIE, deleteCookie.toString())
 				.build();
+	}
+	
+	@PostMapping("/register")
+	public ResponseEntity<Void> register(
+			@Valid @RequestBody RegisterRequest request
+			){
+		authService.register(request);
+		
+		return ResponseEntity.noContent().build();
 	}
 }
