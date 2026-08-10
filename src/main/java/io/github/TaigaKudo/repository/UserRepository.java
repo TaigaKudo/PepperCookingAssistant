@@ -8,4 +8,5 @@ import io.github.TaigaKudo.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	Optional<User> findByEmailAndDeletedAtIsNull(String email);	
+	boolean existsByEmailAndIdNotAndDeletedAtIsNull(String email, Long id);
 }

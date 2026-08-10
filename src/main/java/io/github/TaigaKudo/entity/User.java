@@ -44,4 +44,16 @@ public class User {
 	
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+	
+	public void changeName(String name) {
+		this.name = name;
+	}
+	
+	public void changePassword(String passwordHash) {
+		this.passwordHash = passwordHash;
+	}
+	
+	public void changeEmail(String email) {
+		this.email = email;
+	}
 }
