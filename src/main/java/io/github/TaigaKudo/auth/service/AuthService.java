@@ -11,7 +11,6 @@ import io.github.TaigaKudo.auth.dto.LoginResult;
 import io.github.TaigaKudo.auth.dto.RefreshResult;
 import io.github.TaigaKudo.auth.exception.AuthenticationException;
 import io.github.TaigaKudo.auth.exception.EmailAlreadyUsedException;
-import io.github.TaigaKudo.auth.exception.GlobalExceptionHandler;
 import io.github.TaigaKudo.dto.LoginRequest;
 import io.github.TaigaKudo.dto.RegisterRequest;
 import io.github.TaigaKudo.entity.RefreshToken;
@@ -24,8 +23,6 @@ import io.github.TaigaKudo.service.RefreshTokenService;
 @Service
 public class AuthService {
 
-    private final GlobalExceptionHandler globalExceptionHandler;
-
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 	private final JwtService jwtService;
@@ -37,14 +34,12 @@ public class AuthService {
 			PasswordEncoder passwordEncoder,
 			JwtService jwtService,
 			RefreshTokenService refreshTokenService,
-			RefreshTokenProperties refreshTokenProperties,
-			GlobalExceptionHandler globalExceptionHandler) {
+			RefreshTokenProperties refreshTokenProperties) {
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;
 		this.jwtService = jwtService;
 		this.refreshTokenService = refreshTokenService;
 		this.refreshTokenProperties = refreshTokenProperties;
-		this.globalExceptionHandler = globalExceptionHandler;
 	}
 	
 	/* ログイン認証 */
