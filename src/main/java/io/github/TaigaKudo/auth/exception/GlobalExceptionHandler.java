@@ -37,4 +37,18 @@ public class GlobalExceptionHandler {
 				.status(HttpStatus.BAD_REQUEST)
 				.body(new ErrorResponse(exception.getMessage()));
 	}
+	
+	@ExceptionHandler(StockNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleStockNotFoundException(StockNotFoundException exception){
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(new ErrorResponse(exception.getMessage()));
+	}
+	
+	@ExceptionHandler(IngredientNotFoundException.class)
+	public ResponseEntity<ErrorResponse> handleIngredientNotFoundException(IngredientNotFoundException exception){
+		return ResponseEntity
+				.status(HttpStatus.NOT_FOUND)
+				.body(new ErrorResponse(exception.getMessage())); 
+	}
 }
