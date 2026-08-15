@@ -27,6 +27,19 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Stock {
 	
+	/* アプリ側で使用するコンストラクタ */
+	public Stock(
+			Ingredient ingredient,
+			User user,
+			BigDecimal quantity,
+			LocalDate expirationDate
+			) {
+		this.ingredient = ingredient;
+		this.user = user;
+		this.quantity = quantity;
+		this.expirationDate = expirationDate;
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -55,4 +68,21 @@ public class Stock {
 	
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+	
+	public void changeIngredient(Ingredient ingredient) {
+		this.ingredient = ingredient;
+	}
+	
+	
+	public void changeQuantity(BigDecimal quantity) {
+		this.quantity = quantity;
+	}
+	
+	public void changeExpirationDate(LocalDate expirationDate) {
+		this.expirationDate = expirationDate;
+	}
+	
+	public void delete() {
+		this.deletedAt = LocalDateTime.now();
+	}
 }

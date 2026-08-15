@@ -34,11 +34,11 @@ public class Ingredient {
 	@Column
 	private String reading;
 	
-	@Column(nullable = false)
+	@Column
 	private String defaultUnit;
 	
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@JoinColumn(name = "category_id", nullable = false)
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "category_id")
 	private IngredientCategory category;
 	
 	@Column(nullable = false)
@@ -51,4 +51,8 @@ public class Ingredient {
 	
 	@Column
 	private LocalDateTime deletedAt;
+	
+	public void changeCategory(IngredientCategory category) {
+		this.category = category;
+	}
 }
