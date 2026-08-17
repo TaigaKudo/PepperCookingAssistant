@@ -1,4 +1,8 @@
-export async function getStocks(accessToken: string){
+import type { Stock } from '../types/stock'
+
+export async function getStocks(
+    accessToken: string
+):Promise<Stock[]> {
     const response = await fetch('http://localhost:8080/stocks', {
         method: 'GET',
         headers: {

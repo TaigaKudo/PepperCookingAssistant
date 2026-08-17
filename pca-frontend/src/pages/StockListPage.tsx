@@ -1,9 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { getStocks } from '../api/stockApi'
+import type { Stock } from '../types/stock'
+import { Link } from 'react-router-dom'
 
 function StockListPage() {
     const { accessToken } = useAuth()
+    const [stocks, setStocks] = useState<Stock[]>([])
 
     useEffect(() => {
         if (!accessToken) {
@@ -11,8 +14,8 @@ function StockListPage() {
         }
 
         const fetchStocks = async () => {
-            const stocks = await getStocks(accessToken)
-            console.log(stocks)
+            const fetchedStocks = await getStocks(accessToken)
+            setStocks(fetchedStocks)
         }
 
         fetchStocks()
@@ -21,6 +24,25 @@ function StockListPage() {
     return (
         <main>
             <h1>在庫一覧</h1>
+
+            {stocks.length === 0 ? (
+                <p>在庫がありません</p>
+            ) : (
+                <ul>
+                    {stocks.map((stock) => (
+                        <li key={stock.stockId}>
+                            {stock.ingredientId}
+                            {' '}
+                            {stock.quantity}
+                            {stock.defaultUnit}
+                            {' '}
+                            期限：{stock.expirationDate}
+                        </li>
+                    ))}
+                </ul>
+            )}
+
+            <Link to="/stocks/new">在庫を登録する</Link>
         </main>
     )
 }
