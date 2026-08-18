@@ -5,7 +5,7 @@ import type { Stock } from '../types/stock'
 import { Link } from 'react-router-dom'
 
 function StockListPage() {
-    const { accessToken } = useAuth()
+    const { accessToken, isLoading } = useAuth()
     const [stocks, setStocks] = useState<Stock[]>([])
 
     useEffect(() => {
@@ -20,6 +20,10 @@ function StockListPage() {
 
         fetchStocks()
     }, [accessToken])
+
+    if(isLoading){
+        return <p>読み込み中...</p>
+    }
 
     return (
         <main>
