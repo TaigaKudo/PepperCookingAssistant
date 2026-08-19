@@ -8,5 +8,5 @@ export type Stock = {
     categoryReading: string | null
     userId: number
     quantity: number
-    expirationDate: String
+    expirationDate: string
 }

@@ -1,5 +1,7 @@
 import type { Stock } from '../types/stock'
 import { getCsrfToken } from './csrf'
+import type { StockUpdateRequest } from '../types/stockUpdateRequest'
+import StockEditPage from '../pages/StockEditPage'
 
 export async function getStocks(
     accessToken: string
@@ -42,6 +44,55 @@ export async function createStock(
     })
     if(!response.ok){
         throw new Error('在庫登録に失敗しました')
+    }
+
+    return await response.json()
+}
+
+export async function getStock(
+    accessToken: string,
+    stockId: number
+): Promise<Stock> {
+    const response = await fetch(
+        `http://localhost:8080/stocks/${stockId}`,
+        {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+            },
+        }
+    )
+
+    if(!response.ok){
+        throw new Error('在庫情報の取得に失敗しました')
+    }
+
+    return await response.json()
+}
+
+export async function updateStock(
+    accessToken: string,
+    stockId: number,
+    request: StockUpdateRequest
+){
+    const csrfToken = await getCsrfToken()
+
+    const response = await fetch(
+        `http://localhost:8080/stocks/${stockId}`,
+        {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify(request),
+        }
+    )
+
+    if(!response.ok){
+        throw new Error('在庫更新に失敗しました')
     }
 
     return await response.json()

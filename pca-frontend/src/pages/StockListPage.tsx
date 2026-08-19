@@ -35,12 +35,18 @@ function StockListPage() {
                 <ul>
                     {stocks.map((stock) => (
                         <li key={stock.stockId}>
-                            {stock.ingredientId}
+                            {stock.ingredientName}
                             {' '}
                             {stock.quantity}
                             {stock.defaultUnit}
                             {' '}
                             期限：{stock.expirationDate}
+
+                            {' '}
+
+                            <Link to={`/stocks/${stock.stockId}/edit`}>
+                                編集
+                            </Link>
                         </li>
                     ))}
                 </ul>

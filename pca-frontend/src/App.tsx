@@ -1,8 +1,9 @@
 import {Routes, Route } from 'react-router-dom'
+import ProtectedRoute from './components/ProtectedRoute'
 import LoginPage from './pages/LoginPage'
 import StockListPage from './pages/StockListPage'
 import StockCreatePage from './pages/StockCreatePage'
-import ProtectedRoute from './components/ProtectedRoute'
+import StockEditPage from './pages/StockEditPage'
 
 function App() {
   return (
@@ -24,6 +25,14 @@ function App() {
         element={
           <ProtectedRoute>
             <StockCreatePage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/stocks/:id/edit"
+        element={
+          <ProtectedRoute>
+            <StockEditPage />
           </ProtectedRoute>
         }
       />
