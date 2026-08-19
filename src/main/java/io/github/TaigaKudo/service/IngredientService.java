@@ -39,9 +39,9 @@ public class IngredientService {
 				ingredient.getName(),
 				ingredient.getReading(),
 				ingredient.getDefaultUnit(),
-				category.getId(),
-				category.getCategoryName(),
-				category.getReading()
+				category != null ? category.getId() : null,
+				category != null ? category.getCategoryName() : null,
+				category != null ? category.getReading() : null
 				);
 	}
 }
