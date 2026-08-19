@@ -24,7 +24,7 @@ export async function createStock(
     ingredientId: number,
     quantity: number,
     expirationDate: string
-){
+): Promise<void>{
     const csrfToken = await getCsrfToken()
 
     const response = await fetch('http://localhost:8080/stocks', {
@@ -44,8 +44,6 @@ export async function createStock(
     if(!response.ok){
         throw new Error('在庫登録に失敗しました')
     }
-
-    return await response.json()
 }
 
 export async function getStock(
