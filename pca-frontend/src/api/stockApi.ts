@@ -97,3 +97,25 @@ export async function updateStock(
 
     return await response.json()
 }
+
+export async function deleteStock(
+    accessToken: string,
+    stockId: number
+){
+    const csrfToken = await getCsrfToken()
+
+    const response = await fetch(
+        `http://localhost:8080/stocks/${stockId}`,
+        {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'X-XSRF-TOKEN': csrfToken,
+            },
+        }
+    )
+    if(!response.ok){
+        throw new Error('在庫削除に失敗しました')
+    }
+}
