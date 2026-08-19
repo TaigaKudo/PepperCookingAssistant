@@ -1,7 +1,6 @@
 import type { Stock } from '../types/stock'
 import { getCsrfToken } from './csrf'
 import type { StockUpdateRequest } from '../types/stockUpdateRequest'
-import StockEditPage from '../pages/StockEditPage'
 
 export async function getStocks(
     accessToken: string
