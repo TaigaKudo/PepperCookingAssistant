@@ -1,5 +1,6 @@
-import type { User } from '../types/user'
+import type { EmailChangeRequest, User } from '../types/user'
 import type { AuthFetch } from '../types/auth'
+import { getCsrfToken } from './csrf'
 
 export async function getMe(
     authFetch: AuthFetch
@@ -13,4 +14,27 @@ export async function getMe(
     }
 
     return await response.json()
+}
+
+export async function changeEmail(
+    authFetch: AuthFetch,
+    request: EmailChangeRequest
+): Promise<void>{
+    const csrfToken = await getCsrfToken()
+
+    const response = await authFetch(
+        'http://localhost:8080/users/me/email',{
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-XSRF-TOKEN': csrfToken,
+            },
+            body: JSON.stringify(request),
+        }
+    )
+
+    if(!response.ok){
+        throw new Error('メールアドレスの変更に失敗しました')
+    }
 }
