@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { changeEmail, getMe } from '../api/userApi'
+import { changeEmail, changePassword, getMe } from '../api/userApi'
 import type { User } from '../types/user'
 
 function SettingPage(){
@@ -8,7 +8,9 @@ function SettingPage(){
 
     const [user, setUser] = useState<User | null>(null)
     const [newEmail, setNewEmail] = useState('')
-    const [currentPassword, setCurrentPassword] = useState('')
+    const [emailCurrentPassword, setEmailCurrentPassword] = useState('')
+    const [passwordCurrentPassword, setPasswordCurrentPassword] = useState('')
+    const [newPassword, setNewPassword] = useState('')
     const [message, setMessage] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
@@ -24,12 +26,35 @@ function SettingPage(){
 
             await changeEmail(authFetch, {
                 newEmail,
-                currentPassword
+                currentPassword: emailCurrentPassword
             })
 
             setMessage('メールアドレスを変更しました')
         } catch {
             setError('メールアドレスの変更に失敗しました')
+        }
+    }
+
+    const handlePasswordChange = async (
+        e: React.SubmitEvent<HTMLElement>
+    ) => {
+        e.preventDefault()
+
+        try{
+            setError(null)
+            setMessage(null)
+
+            await changePassword(authFetch, {
+                currentPassword: passwordCurrentPassword,
+                newPassword
+            })
+
+            setMessage('パスワードを変更しました')
+
+            setPasswordCurrentPassword('')
+            setNewPassword('')
+        } catch {
+            setError('パスワード変更に失敗しました')
         }
     }
 
@@ -89,13 +114,45 @@ function SettingPage(){
                     <input
                         id="currentPassword"
                         type="password"
-                        value={currentPassword}
-                        onChange={(e) => setCurrentPassword(e.target.value)}
+                        value={emailCurrentPassword}
+                        onChange={(e) => setEmailCurrentPassword(e.target.value)}
                     />
                 </div>
 
                 <button type="submit">
                     メールアドレスを変更
+                </button>
+            </form>
+
+            <form onSubmit={handlePasswordChange}>
+                <div>
+                    <label htmlFor="currentPassword">
+                        現在のパスワード：
+                    </label>
+
+                    <input
+                        id="currentPassword"
+                        type="password"
+                        value={passwordCurrentPassword}
+                        onChange={(e) => setPasswordCurrentPassword(e.target.value)}
+                    />
+                </div>
+
+                <div>
+                    <label htmlFor="newPassword">
+                        新しいパスワード：
+                    </label>
+
+                    <input
+                        id="newPassword"
+                        type="password"
+                        value={newPassword}
+                        onChange={(e) => setNewPassword(e.target.value)}
+                    />
+                </div>
+
+                <button type="submit">
+                    パスワードを変更
                 </button>
             </form>
 

@@ -8,3 +8,8 @@ export type EmailChangeRequest = {
     newEmail: string
     currentPassword: string
 }
+
+export type PasswordChangeRequest = {
+    currentPassword: string
+    newPassword: string
+}
