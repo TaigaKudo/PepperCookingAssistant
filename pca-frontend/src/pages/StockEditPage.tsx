@@ -27,17 +27,24 @@ function StockEditPage() {
             return
         }
 
-        await updateStock(
-            authFetch,
-            stock.stockId,
-            {
-                ingredientId: stock.ingredientId,
-                quantity: stock.quantity,
-                expirationDate: stock.expirationDate
-            }
-        )
+        try{
+            setError(null)
+            
+            await updateStock(
+                authFetch,
+                stock.stockId,
+                {
+                    ingredientId: stock.ingredientId,
+                    quantity: stock.quantity,
+                    expirationDate: stock.expirationDate
+                }
+            )
 
-        navigate('/stocks')
+            navigate('/stocks')
+        } catch {
+            setError('在庫更新に失敗しました')
+        }
+
     }
 
     useEffect(() => {
