@@ -44,7 +44,7 @@ export async function createStock(
 export async function getStock(
     authFetch: AuthFetch,
     stockId: number
-): Promise<Stock> {
+): Promise<Stock | null> {
     const response = await authFetch(
         `http://localhost:8080/stocks/${stockId}`,
         {
@@ -52,6 +52,10 @@ export async function getStock(
         }
     )
 
+    if(response.status === 404){
+        return null
+    }
+    
     if(!response.ok){
         throw new Error('在庫情報の取得に失敗しました')
     }

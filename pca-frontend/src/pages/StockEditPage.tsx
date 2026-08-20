@@ -12,6 +12,9 @@ function StockEditPage() {
     const navigate = useNavigate()
 
     const [stock, setStock] = useState<Stock | null>(null)
+    const [isLoading, setIsLoading] = useState(true)
+    const [notFound, setNotFound] = useState(false)
+    const [error, setError] = useState<string | null>(null)
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
 
     const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
@@ -36,17 +39,33 @@ function StockEditPage() {
 
         navigate('/stocks')
     }
+
     useEffect(() => {
         if(!accessToken || !id){
             return 
         }
         const fetchStock = async () => {
-            const fetchedStock = await getStock(
-                authFetch,
-                Number(id)
-            )
+            try{
+                setIsLoading(true)
+                setNotFound(false)
+                setError(null)
 
-            setStock(fetchedStock)
+                const fetchedStock = await getStock(
+                authFetch,
+                    Number(id)
+                )
+
+                if(!fetchedStock){
+                    setNotFound(true)
+                        return
+                }
+
+                setStock(fetchedStock)
+            } catch {
+                setError('在庫情報の取得に失敗しました')
+            } finally {
+                setIsLoading(false)
+            }
         }
 
         const fetchIngredients = async () => {
@@ -61,8 +80,20 @@ function StockEditPage() {
         fetchIngredients()
     }, [accessToken, id])
 
-    if(!stock){
+    if(isLoading){
         return <p>読み込み中...</p>
+    }
+
+    if(notFound){
+        return <p>在庫が見つかりません</p>
+    }
+
+    if(error){
+        return <p>{error}</p>
+    }
+
+    if(!stock){
+        return <p>在庫情報を表示できません</p>
     }
     
     return (
