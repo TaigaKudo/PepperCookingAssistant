@@ -5,6 +5,7 @@ import StockListPage from './pages/StockListPage'
 import StockCreatePage from './pages/StockCreatePage'
 import StockEditPage from './pages/StockEditPage'
 import Layout from './components/Layout'
+import HomePage from './pages/HomePage'
 
 function App() {
   return (
@@ -20,6 +21,12 @@ function App() {
           </ProtectedRoute>
         }
       >
+        <Route
+          path="/"
+          element={
+            <HomePage />
+          }
+        />
         <Route
           path="/stocks"
           element={
