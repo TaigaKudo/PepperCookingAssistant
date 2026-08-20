@@ -4,7 +4,6 @@ import { createStock } from '../api/stockApi'
 import { useAuth } from '../context/AuthContext'
 import { getIngredients } from '../api/ingredientApi'
 import type { Ingredient } from '../types/ingredient'
-import type { AuthFetch } from '../types/auth'
 
 function StockCreatePage(){
     const [ingredientId, setIngredientId] = useState('')
