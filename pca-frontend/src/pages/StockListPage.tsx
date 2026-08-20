@@ -3,19 +3,16 @@ import { useAuth} from '../context/AuthContext'
 import { getStocks, deleteStock } from '../api/stockApi'
 import type { Stock } from '../types/stock'
 import { Link, useNavigate } from 'react-router-dom'
-import { logout } from '../api/authApi'
 
 function StockListPage() {
     const {
         accessToken,
-        setAccessToken,
         isLoading,
         authFetch
     } = useAuth()
     const [stocks, setStocks] = useState<Stock[]>([])
     const [isFetching, setIsFetching] = useState(true)
     const [error, setError] = useState<string | null>(null)
-    const navigate = useNavigate()
 
     const handleDelete = async (stockId: number) => {
         if(!accessToken){
@@ -27,14 +24,6 @@ function StockListPage() {
         setStocks((currentStocks) =>
             currentStocks.filter((stock) => stock.stockId !== stockId)
         )
-    }
-
-    const handleLogout = async () => {
-        await logout()
-
-        setAccessToken(null)
-
-        navigate('/login')
     }
 
     useEffect(() => {
@@ -73,9 +62,6 @@ function StockListPage() {
 
     return (
         <main>
-            <button onClick={handleLogout}>
-                ログアウト
-            </button>
             <h1>在庫一覧</h1>
 
             {stocks.length === 0 ? (
