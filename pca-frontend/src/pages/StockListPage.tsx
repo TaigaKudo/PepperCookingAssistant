@@ -13,6 +13,8 @@ function StockListPage() {
         authFetch
     } = useAuth()
     const [stocks, setStocks] = useState<Stock[]>([])
+    const [isFetching, setIsFetching] = useState(true)
+    const [error, setError] = useState<string | null>(null)
     const navigate = useNavigate()
 
     const handleDelete = async (stockId: number) => {
@@ -41,15 +43,32 @@ function StockListPage() {
         }
 
         const fetchStocks = async () => {
-            const fetchedStocks = await getStocks(authFetch)
-            setStocks(fetchedStocks)
+            try{
+                setIsFetching(true)
+                setError(null)
+
+                const fetchedStocks = await getStocks(authFetch)
+                setStocks(fetchedStocks)
+            } catch {
+                setError('在庫一覧の取得に失敗しました')
+            } finally {
+                setIsFetching(false)
+            }
         }
 
         fetchStocks()
-    }, [accessToken])
+    }, [accessToken, authFetch])
 
     if(isLoading){
-        return <p>読み込み中...</p>
+        return <p>認証情報を確認中...</p>
+    }
+
+    if(isFetching){
+        return <p>在庫一覧を読み込み中...</p>
+    }
+
+    if(error){
+        return <p>{error}</p>
     }
 
     return (
