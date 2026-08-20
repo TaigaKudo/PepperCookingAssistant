@@ -1,13 +1,11 @@
 import type { Ingredient } from '../types/ingredient'
+import type { AuthFetch } from '../types/auth'
 
 export async function getIngredients(
-    accessToken: string
+    authFetch: AuthFetch
 ): Promise<Ingredient[]> {
-    const response = await fetch('http://localhost:8080/ingredient', {
+    const response = await authFetch('http://localhost:8080/ingredient', {
         method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-        },
     })
 
     if (!response.ok) {

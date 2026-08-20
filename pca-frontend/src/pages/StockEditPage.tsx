@@ -8,7 +8,7 @@ import { getIngredients } from '../api/ingredientApi'
 
 function StockEditPage() {
     const { id } = useParams()
-    const { accessToken } = useAuth()
+    const { accessToken, authFetch } = useAuth()
     const navigate = useNavigate()
 
     const [stock, setStock] = useState<Stock | null>(null)
@@ -25,7 +25,7 @@ function StockEditPage() {
         }
 
         await updateStock(
-            accessToken,
+            authFetch,
             stock.stockId,
             {
                 ingredientId: stock.ingredientId,
@@ -42,7 +42,7 @@ function StockEditPage() {
         }
         const fetchStock = async () => {
             const fetchedStock = await getStock(
-                accessToken,
+                authFetch,
                 Number(id)
             )
 
@@ -51,7 +51,7 @@ function StockEditPage() {
 
         const fetchIngredients = async () => {
             const fetchedIngredients = await getIngredients(
-                accessToken
+                authFetch
             )
 
             setIngredients(fetchedIngredients)
