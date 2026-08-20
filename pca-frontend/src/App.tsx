@@ -6,6 +6,7 @@ import StockCreatePage from './pages/StockCreatePage'
 import StockEditPage from './pages/StockEditPage'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
+import SettingPage from './pages/SettingPage'
 
 function App() {
   return (
@@ -28,27 +29,27 @@ function App() {
           }
         />
         <Route
+          path="/settings"
+          element={
+            <SettingPage />
+          }
+        />
+        <Route
           path="/stocks"
           element={
-            <ProtectedRoute>
-              <StockListPage />
-            </ProtectedRoute>
+            <StockListPage />
           }
         />
         <Route
           path="/stocks/new"
           element={
-            <ProtectedRoute>
-              <StockCreatePage />
-            </ProtectedRoute>
+            <StockCreatePage />
           }
         />
         <Route
           path="/stocks/:id/edit"
           element={
-            <ProtectedRoute>
-              <StockEditPage />
-            </ProtectedRoute>
+            <StockEditPage />
           }
         />
       </Route>
