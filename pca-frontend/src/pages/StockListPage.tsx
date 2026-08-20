@@ -6,7 +6,12 @@ import { Link, useNavigate } from 'react-router-dom'
 import { logout } from '../api/authApi'
 
 function StockListPage() {
-    const { accessToken, setAccessToken, isLoading } = useAuth()
+    const {
+        accessToken,
+        setAccessToken,
+        isLoading,
+        authFetch
+    } = useAuth()
     const [stocks, setStocks] = useState<Stock[]>([])
     const navigate = useNavigate()
 
@@ -15,7 +20,7 @@ function StockListPage() {
             return
         }
 
-        await deleteStock(accessToken, stockId)
+        await deleteStock(authFetch, stockId)
 
         setStocks((currentStocks) =>
             currentStocks.filter((stock) => stock.stockId !== stockId)
@@ -36,7 +41,7 @@ function StockListPage() {
         }
 
         const fetchStocks = async () => {
-            const fetchedStocks = await getStocks(accessToken)
+            const fetchedStocks = await getStocks(authFetch)
             setStocks(fetchedStocks)
         }
 

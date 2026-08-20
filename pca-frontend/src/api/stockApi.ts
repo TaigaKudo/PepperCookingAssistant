@@ -1,16 +1,12 @@
 import type { Stock } from '../types/stock'
 import { getCsrfToken } from './csrf'
 import type { StockUpdateRequest } from '../types/stockUpdateRequest'
+import type { AuthFetch } from '../types/auth'
 
 export async function getStocks(
-    accessToken: string
+    authFetch: AuthFetch
 ):Promise<Stock[]> {
-    const response = await fetch('http://localhost:8080/stocks', {
-        method: 'GET',
-        headers: {
-            'Authorization': `Bearer ${accessToken}`,
-        },
-    })
+    const response = await authFetch('http://localhost:8080/stocks')
 
     if(!response.ok){
         throw new Error('在庫一覧の取得に失敗しました')
@@ -20,18 +16,17 @@ export async function getStocks(
 }
 
 export async function createStock(
-    accessToken: string,
+    authFetch: AuthFetch,
     ingredientId: number,
     quantity: number,
     expirationDate: string
 ): Promise<void>{
     const csrfToken = await getCsrfToken()
 
-    const response = await fetch('http://localhost:8080/stocks', {
+    const response = await authFetch('http://localhost:8080/stocks', {
         method: 'POST',
         credentials: 'include',
         headers: {
-            'Authorization': `Bearer ${accessToken}`,
             'Content-Type': `application/json`,
             'X-XSRF-TOKEN': csrfToken,
         },
@@ -47,16 +42,13 @@ export async function createStock(
 }
 
 export async function getStock(
-    accessToken: string,
+    authFetch: AuthFetch,
     stockId: number
 ): Promise<Stock> {
-    const response = await fetch(
+    const response = await authFetch(
         `http://localhost:8080/stocks/${stockId}`,
         {
             method: 'GET',
-            headers: {
-                'Authorization': `Bearer ${accessToken}`,
-            },
         }
     )
 
@@ -68,19 +60,18 @@ export async function getStock(
 }
 
 export async function updateStock(
-    accessToken: string,
+    authFetch: AuthFetch,
     stockId: number,
     request: StockUpdateRequest
 ){
     const csrfToken = await getCsrfToken()
 
-    const response = await fetch(
+    const response = await authFetch(
         `http://localhost:8080/stocks/${stockId}`,
         {
             method: 'PUT',
             credentials: 'include',
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
                 'Content-Type': 'application/json',
                 'X-XSRF-TOKEN': csrfToken,
             },
@@ -96,18 +87,17 @@ export async function updateStock(
 }
 
 export async function deleteStock(
-    accessToken: string,
+    authFetch: AuthFetch,
     stockId: number
 ){
     const csrfToken = await getCsrfToken()
 
-    const response = await fetch(
+    const response = await authFetch(
         `http://localhost:8080/stocks/${stockId}`,
         {
             method: 'DELETE',
             credentials: 'include',
             headers: {
-                'Authorization': `Bearer ${accessToken}`,
                 'X-XSRF-TOKEN': csrfToken,
             },
         }

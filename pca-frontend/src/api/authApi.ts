@@ -1,4 +1,3 @@
-import { getCookie } from '../utils/cookie'
 import { getCsrfToken } from './csrf'
 import type { TokenResponse } from '../types/auth'
 

@@ -4,12 +4,13 @@ import { createStock } from '../api/stockApi'
 import { useAuth } from '../context/AuthContext'
 import { getIngredients } from '../api/ingredientApi'
 import type { Ingredient } from '../types/ingredient'
+import type { AuthFetch } from '../types/auth'
 
 function StockCreatePage(){
     const [ingredientId, setIngredientId] = useState('')
     const [quantity, setQuantity] = useState('')
     const [expirationDate, setExpirationDate] = useState('')
-    const { accessToken } = useAuth()
+    const { accessToken, authFetch } = useAuth()
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
     const navigate = useNavigate()
 
@@ -23,7 +24,7 @@ function StockCreatePage(){
         }
 
         await createStock(
-            accessToken,
+            authFetch,
             Number(ingredientId),
             Number(quantity),
             expirationDate
@@ -38,7 +39,7 @@ function StockCreatePage(){
         }
 
         const fetchIngredients = async () => {
-            const fetchedIngredients = await getIngredients(accessToken)
+            const fetchedIngredients = await getIngredients(authFetch)
             console.log(fetchedIngredients)
             setIngredients(fetchedIngredients)
         }
