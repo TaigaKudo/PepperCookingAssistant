@@ -10,6 +10,7 @@ function StockCreatePage(){
     const [quantity, setQuantity] = useState('')
     const [expirationDate, setExpirationDate] = useState('')
     const { accessToken, authFetch } = useAuth()
+    const [error, setError] = useState<string | null>(null)
     const [ingredients, setIngredients] = useState<Ingredient[]>([])
     const navigate = useNavigate()
 
@@ -22,14 +23,20 @@ function StockCreatePage(){
             return 
         }
 
-        await createStock(
-            authFetch,
-            Number(ingredientId),
-            Number(quantity),
-            expirationDate
-        )
+        try{
+            setError(null)
+            
+            await createStock(
+                authFetch,
+                Number(ingredientId),
+                Number(quantity),
+                expirationDate
+            )
 
-        navigate('/stocks')
+            navigate('/stocks')
+        } catch {
+            setError('在庫登録に失敗しました')
+        }
     }
 
     useEffect(() => {
@@ -38,9 +45,14 @@ function StockCreatePage(){
         }
 
         const fetchIngredients = async () => {
-            const fetchedIngredients = await getIngredients(authFetch)
-            console.log(fetchedIngredients)
-            setIngredients(fetchedIngredients)
+            try{
+                setError(null)
+
+                const fetchedIngredients = await getIngredients(authFetch)
+                setIngredients(fetchedIngredients)
+            } catch {
+                setError('食材一覧の取得に失敗しました')
+            }
         }
 
         fetchIngredients()
@@ -49,6 +61,7 @@ function StockCreatePage(){
     return (
         <main>
             <h1>在庫登録</h1>
+            {error && <p>{error}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label htmlFor="ingredientId">食材</label>
