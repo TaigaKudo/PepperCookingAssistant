@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '../context/AuthContext'
-import { changeEmail, changePassword, getMe } from '../api/userApi'
+import { changeEmail, changePassword, deleteAccount, getMe } from '../api/userApi'
 import type { User } from '../types/user'
+import { useNavigate } from 'react-router-dom'
 
 function SettingPage(){
-    const { authFetch } = useAuth()
+    const { authFetch, setAccessToken } = useAuth()
 
     const [user, setUser] = useState<User | null>(null)
     const [newEmail, setNewEmail] = useState('')
@@ -14,6 +15,7 @@ function SettingPage(){
     const [message, setMessage] = useState<string | null>(null)
     const [isLoading, setIsLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     const handleEmailChange = async (
         e: React.SubmitEvent<HTMLFormElement>
@@ -32,6 +34,28 @@ function SettingPage(){
             setMessage('メールアドレスを変更しました')
         } catch {
             setError('メールアドレスの変更に失敗しました')
+        }
+    }
+
+    const handleDeleteAccount = async () => {
+        const confirmed = window.confirm(
+            '本当にアカウントを削除しますか？'
+        )
+
+        if(!confirmed){
+            return
+        }
+
+        try{
+            setError(null)
+
+            await deleteAccount(authFetch)
+
+            setAccessToken(null)
+
+            navigate('/login')
+        } catch {
+            setError('アカウント削除に失敗しました')
         }
     }
 
@@ -157,6 +181,17 @@ function SettingPage(){
             </form>
 
             {message && <p>{message}</p>}
+
+            <form>
+                <div>
+                    <button
+                    type="button"
+                    onClick={handleDeleteAccount}
+                    >
+                        アカウントを削除
+                    </button>
+                </div>
+            </form>
         </section>
     )
 }

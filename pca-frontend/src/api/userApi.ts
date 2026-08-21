@@ -62,3 +62,25 @@ export async function changePassword(
         throw new Error('パスワード変更に失敗しました')
     }
 }
+
+export async function deleteAccount(
+    authFetch: AuthFetch
+): Promise<void> {
+    console.log('deleteAccount 開始')
+    const csrfToken = await getCsrfToken()
+
+    const response = await authFetch(
+        'http://localhost:8080/users/me',
+        {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: {
+                'X-XSRF-TOKEN': csrfToken
+            },
+        }
+    )
+
+    if(!response.ok){
+        throw new Error('アカウント削除に失敗しました')
+    }
+}

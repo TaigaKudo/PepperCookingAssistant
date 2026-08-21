@@ -25,6 +25,12 @@ function Layout() {
                 <button onClick={handleLogout}>
                     ログアウト
                 </button>
+
+                <div>
+                    <Link to="/settings">
+                        ユーザー設定
+                    </Link>
+                </div>
             </header>
 
             <main>
