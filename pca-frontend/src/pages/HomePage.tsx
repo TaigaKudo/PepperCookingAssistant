@@ -21,7 +21,9 @@ function HomePage(){
                 </li>
 
                 <li>
-                    ユーザー設定
+                    <Link to="/settings">
+                        ユーザー設定
+                    </Link>
                 </li>
             </ul>
         </section>

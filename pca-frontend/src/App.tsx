@@ -6,6 +6,7 @@ import StockCreatePage from './pages/StockCreatePage'
 import StockEditPage from './pages/StockEditPage'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
+import SettingPage from './pages/SettingPage'
 import RegisterPage from './pages/RegisterPage'
 
 function App() {
@@ -30,6 +31,12 @@ function App() {
           path="/"
           element={
             <HomePage />
+          }
+        />
+        <Route
+          path="/settings"
+          element={
+            <SettingPage />
           }
         />
         <Route
