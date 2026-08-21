@@ -6,6 +6,7 @@ import StockCreatePage from './pages/StockCreatePage'
 import StockEditPage from './pages/StockEditPage'
 import Layout from './components/Layout'
 import HomePage from './pages/HomePage'
+import RegisterPage from './pages/RegisterPage'
 
 function App() {
   return (
@@ -13,6 +14,10 @@ function App() {
       <Route
         path="/login"
         element={<LoginPage />}
+      />
+      <Route
+        path="/register"
+        element={<RegisterPage />}
       />
       <Route
         element={
@@ -30,25 +35,19 @@ function App() {
         <Route
           path="/stocks"
           element={
-            <ProtectedRoute>
               <StockListPage />
-            </ProtectedRoute>
           }
         />
         <Route
           path="/stocks/new"
           element={
-            <ProtectedRoute>
               <StockCreatePage />
-            </ProtectedRoute>
           }
         />
         <Route
           path="/stocks/:id/edit"
           element={
-            <ProtectedRoute>
               <StockEditPage />
-            </ProtectedRoute>
           }
         />
       </Route>

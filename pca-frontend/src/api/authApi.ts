@@ -5,10 +5,6 @@ export async function login(
     email: string,
     password: string
 ): Promise<TokenResponse> {
-    await fetch('http://localhost:8080/auth/csrf',{
-        method: 'GET',
-        credentials: 'include'
-    })
 
     const csrfToken = await getCsrfToken()
 
@@ -66,5 +62,31 @@ export async function logout(
 
     if (!response.ok){
         throw new Error('ログアウトに失敗しました')
+    }
+}
+
+export async function register(
+    name: string,
+    email: string,
+    password: string
+): Promise<void> {
+    const csrfToken = await getCsrfToken()
+
+    const response = await fetch('http://localhost:8080/auth/register', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-XSRF-TOKEN': csrfToken
+        },
+        body: JSON.stringify({
+            name,
+            email,
+            password
+        })
+    })
+
+    if(!response.ok){
+        throw new Error('新規ユーザー作成に失敗しました')
     }
 }
