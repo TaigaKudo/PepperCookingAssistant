@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { login } from '../api/authApi'
 import { useAuth } from '../context/AuthContext'
-import { useNavigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 function LoginPage() {
     const [email, setEmail] = useState('')
@@ -56,6 +56,12 @@ function LoginPage() {
                     </button>
                 </form>
             </section>
+
+            <div>
+                <Link to="/register">
+                    新規登録はこちら
+                </Link>
+            </div>
         </main>
     )
 }
